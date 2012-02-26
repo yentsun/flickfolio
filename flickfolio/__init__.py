@@ -8,10 +8,6 @@ from flickfolio.resources import Root
 from flickfolio.models import initialize_sql, Setting
 
 here = os.path.dirname(os.path.abspath(__file__))
-theme = 'sample'
-
-def find_renderer(template_file, theme=theme):
-    return 'flickfolio:templates/%s/%s' % (theme, template_file)
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
@@ -19,6 +15,10 @@ def main(global_config, **settings):
     engine = engine_from_config(settings, 'sqlalchemy.')
     initialize_sql(engine)
     theme = Setting.fetch_value('theme')
+
+    def find_renderer(template_file, theme=theme):
+        return 'flickfolio:templates/%s/%s' % (theme, template_file)
+
     session_factory = UnencryptedCookieSessionFactoryConfig('kpAnaAUYsau6piJ5pv')
     config = Configurator(root_factory=Root,
                           settings=settings,
