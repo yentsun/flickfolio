@@ -5,12 +5,12 @@ from pyramid.config import Configurator
 from pyramid.session import UnencryptedCookieSessionFactoryConfig
 
 from flickfolio.resources import Root
-from flickfolio.models import initialize_sql
+from flickfolio.models import initialize_sql, Setting
 
 here = os.path.dirname(os.path.abspath(__file__))
-THEME = 'sample'
+theme = 'sample'
 
-def find_renderer(template_file, theme=THEME):
+def find_renderer(template_file, theme=theme):
     return 'flickfolio:templates/%s/%s' % (theme, template_file)
 
 def main(global_config, **settings):
@@ -18,6 +18,7 @@ def main(global_config, **settings):
     """
     engine = engine_from_config(settings, 'sqlalchemy.')
     initialize_sql(engine)
+    theme = Setting.fetch_value('theme')
     session_factory = UnencryptedCookieSessionFactoryConfig('kpAnaAUYsau6piJ5pv')
     config = Configurator(root_factory=Root,
                           settings=settings,
@@ -50,7 +51,7 @@ def main(global_config, **settings):
     config.add_view('flickfolio.views.dashboard_view',
                     route_name='dashboard',
                     renderer=find_renderer('dashboard.mako', '_admin'))
-    config.add_static_view('static','flickfolio:static/%s' % THEME)
+    config.add_static_view('static','flickfolio:static/%s' % theme)
     config.scan()
 
     return config.make_wsgi_app()

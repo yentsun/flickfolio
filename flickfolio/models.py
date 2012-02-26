@@ -68,7 +68,8 @@ def populate(session):
         about = Page('about', 2, u'About', u'About us body')
         user_id = Setting('user_id', u'')
         api_key = Setting('api_key', u'')
-        session.add_all([index, about, user_id, api_key])
+        theme = Setting('theme', u'sample')
+        session.add_all([index, about, user_id, api_key, theme])
 
 def initialize_sql(engine, out=sys.stdout):
     Base.metadata.bind = engine
