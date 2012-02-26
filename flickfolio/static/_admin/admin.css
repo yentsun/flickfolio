@@ -1,0 +1,28 @@
+/*general*/
+.admin{font-family:sans-serif}
+.admin h3{margin-bottom:1em}
+
+/*lists*/
+.admin table{margin:.6em 0}
+.admin table.list{width:90%}
+.admin .list td{padding:.3em;border-top:1px dotted #ccc}
+
+/*forms*/
+.admin input,.admin textarea{padding:.5em;width:97%;font-size:150%;display:block;margin:.2em 0 1em 0;border:1px solid #ccc}
+.admin label{color:#aaa}
+.admin button{padding:.5em .5em .5em 1.7em;background-position:5px center;background-repeat:no-repeat;border-width:2px;float:right;margin:.5em}
+.admin button.save{background-image:url(img/disk-black.png)}
+/*'postive' buttons*/
+.admin button.save{background-color:#89BC89;border-bottom-color:#668E66;border-right-color:#668E66;border-color:#8BC68B}
+
+/*flash messages*/
+.error,.notice,.ok,.loading{padding:1em 1em 1em 3em;margin:0 0 1em 0;border-style:solid;border-width:1px;background-repeat:no-repeat;background-position:10px 10px;text-shadow: 0 0 0 #ddd;font-family:sans-serif}
+.error{background-color:#FFCFCF;color:red;border-color:red;background-image:url(img/cross-circle.png)}
+.notice,#pageEnd .loading{background-color:#FFF1AF;color:#BFA52F;border-color:#DFC137}
+.notice{background-image:none}
+.notice a{color:#BFA52F}
+.error a{color:red}
+.ok{background-color:#C2FFBF;border-color:green;background-image:url(img/tick-circle.png)}
+.ok,.ok a{color:green}
+.ok a,.notice a,.error a{font-weight:bold;text-decoration:underline}
+.error .data,.error .repopulate,.notice .data,.notice .repopulate{display:none}
