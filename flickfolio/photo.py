@@ -44,10 +44,10 @@ class Photo(object):
         else:
             suffix = '_%s' % SIZES[size]
         return 'http://farm%s.staticflickr.com/%s/%s_%s%s.jpg' % (self.farm,
-                                                                   self.server,
-                                                                   self.id,
-                                                                   self.secret,
-                                                                   suffix)
+                                                                  self.server,
+                                                                  self.id,
+                                                                  self.secret,
+                                                                  suffix)
 
     def _fetch_info(self):
         info = flickr.photos_getInfo(photo_id=self.id)[0]

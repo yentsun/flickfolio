@@ -19,7 +19,9 @@ def main(global_config, **settings):
     engine = engine_from_config(settings, 'sqlalchemy.')
     initialize_sql(engine)
     session_factory = UnencryptedCookieSessionFactoryConfig('kpAnaAUYsau6piJ5pv')
-    config = Configurator(root_factory=Root, settings=settings, session_factory=session_factory)
+    config = Configurator(root_factory=Root,
+                          settings=settings,
+                          session_factory=session_factory)
     config.add_route('index','/')
     config.add_route('gallery','/gallery')
     config.add_route('photoset','/photoset/{id}')
