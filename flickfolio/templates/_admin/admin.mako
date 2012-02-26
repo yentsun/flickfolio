@@ -1,4 +1,4 @@
-<%inherit file="layout.mako"/>
+<%inherit file="../sample/layout.mako"/>
 <%def name="css()"><link rel="stylesheet" href="/static/admin/admin.css" type="text/css" media="screen"></%def>
 <%def name="title()">${next.title()}</%def>
 <h2>${title()}</h2>
