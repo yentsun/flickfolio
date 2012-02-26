@@ -1,0 +1,9 @@
+*.pyc
+cache/*
+*.log
+*.pid
+*.db
+*.egg-info
+.idea/*
+flickfolio/static/*
+flickfolio/templates/*
