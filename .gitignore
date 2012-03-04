@@ -7,3 +7,4 @@ cache/*
 .idea/*
 flickfolio/static/*
 flickfolio/templates/*
+.coverage
