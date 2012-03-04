@@ -32,6 +32,8 @@ def main(argv=sys.argv):
         projects = Page('projects', 7, u'Дизайн-проект',u'Текст о дизайн-проектах')
         user_id = Setting('user_id', u'')
         api_key = Setting('api_key', u'')
-        DBSession.add_all([index, about, contacts, partners, projects, user_id, api_key])
+        secret = Setting('secret', u'')
+        DBSession.add_all([index, about, contacts, partners,
+                           projects, user_id, api_key, secret])
 
 #main()

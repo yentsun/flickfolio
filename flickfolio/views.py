@@ -1,4 +1,3 @@
-from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPFound
 
 from flickfolio.models import Page, Setting
@@ -8,12 +7,12 @@ set_cridentials(Setting.fetch_value('api_key'),
                 Setting.fetch_value('user_id'))
 
 def index_view(request):
-    return {
-    }
+    return {}
 
-def gallery_view(request):
+def photosets_view(request):
+    """List photosets in JSON format"""
     return {
-        'gallery': Photoset.fetch_all()
+        'photosets': Photoset.fetch_all(for_json=True)
     }
 
 def photoset_view(request):

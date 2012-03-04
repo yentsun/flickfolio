@@ -20,19 +20,11 @@ def set_cridentials(api_key, user_id):
 class Photo(object):
     """flickr photo object"""
 
-    def __init__(self, id,
-                 title=None,
-                 secret=None,
-                 server=None,
-                 farm=None,
-                 isprimary=None):
+    def __init__(self, id, **kwargs):
         self.id = id
-        if secret:
-            self.title = title
-            self.server = server
-            self.secret = secret
-            self.farm = farm
-            self.is_primary = isprimary
+        if kwargs:
+            for name, value in kwargs.iteritems():
+                setattr(self, name, value)
             for size in SIZES:
                 setattr(self, size, self._make_url(size))
         else:
@@ -58,33 +50,35 @@ class Photo(object):
         self.thumb = sizes[1].attrib['source']
         self.small = sizes[2].attrib['source']
         self.medium = sizes[4].attrib['source']
-#        self.big = sizes[5].attrib['source']
 
 class Photoset(object):
     """The flickr photoset"""
 
-    description = ''
-
-    def __init__(self, id, title=None, primary=None):
+    def __init__(self, id, for_json=False, **kwargs):
         self.id = id
-        self.photos = []
-        if title:
-            self.title = title
-            self.primary = primary
+        self.items = []
+        if kwargs:
+            for name, value in kwargs.iteritems():
+                setattr(self, name, value)
+            self.thumb = Photo(id=self.primary, farm=self.farm, server=self.server,
+                               secret=self.secret)
+            if for_json:
+                self.thumb = self.thumb.__dict__
         else:
             self._fetch_info()
 
+
     def __iter__(self):
-        for photo in self.photos:
-            yield photo
+        for item in self.items:
+            yield item
 
     def __getitem__(self, num):
-        return self.photos[num]
+        return self.items[num]
 
     def __len__(self):
-        return len(self.photos)
+        return len(self.items)
 
-    def _fetch_info(self):
+    def _fetch_info(self, for_json):
         info = flickr.photosets_getInfo(photoset_id=self.id)[0]
         self.title = info[0].text
         if info[1].text is not None:
@@ -92,8 +86,14 @@ class Photoset(object):
         photo_items = flickr.photosets_getPhotos(photoset_id=self.id)[0]
         for item in photo_items:
             if item.attrib['isprimary'] == '1':
-                self.primary = Photo(**item.attrib)
-            self.photos.append(Photo(**item.attrib))
+                primary = Photo(**item.attrib)
+                if for_json:
+                    primary = Photo(**item.attrib).__dict__
+                self.primary = primary
+            photo = Photo(**item.attrib)
+            if for_json:
+                photo = photo.__dict__
+            self.items.append(photo)
         sets = Photoset.fetch_all()
         for index, photoset in enumerate(sets):
             if photoset.id == self.id:
@@ -104,12 +104,14 @@ class Photoset(object):
                     self.next = sets[0]
 
     @classmethod
-    def fetch_all(cls):
+    def fetch_all(cls, for_json=False):
         photoset_items = flickr.photosets_getList(user_id=USER_ID)[0]
         photosets = []
         for item in photoset_items:
-            photoset = Photoset(item.attrib['id'],
-                                item[0].text,
-                                Photo(item.attrib['primary']))
+            photoset = Photoset(for_json=for_json, **item.attrib)
+            photoset.title = item[0].text
+            photoset.description = item[1].text
+            if for_json:
+                photoset = photoset.__dict__
             photosets.append(photoset)
         return photosets

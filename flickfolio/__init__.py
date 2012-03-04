@@ -19,12 +19,12 @@ def main(global_config, **settings):
     def find_renderer(template_file, theme=theme):
         return 'flickfolio:templates/%s/%s' % (theme, template_file)
 
-    session_factory = UnencryptedCookieSessionFactoryConfig('kpAnaAUYsau6piJ5pv')
+    session_factory = UnencryptedCookieSessionFactoryConfig(Setting.fetch_value('secret'))
     config = Configurator(root_factory=Root,
                           settings=settings,
                           session_factory=session_factory)
     config.add_route('index','/')
-    config.add_route('gallery','/gallery')
+    config.add_route('photosets','/photosets')
     config.add_route('photoset','/photoset/{id}')
     config.add_route('photo','/photo/{id}')
     config.add_route('page','/page/{slug}')
@@ -33,9 +33,9 @@ def main(global_config, **settings):
     config.add_view('flickfolio.views.index_view',
                     route_name='index',
                     renderer=find_renderer('index.mako'))
-    config.add_view('flickfolio.views.gallery_view',
-                    route_name='gallery',
-                    renderer=find_renderer('gallery.mako'))
+    config.add_view('flickfolio.views.photosets_view',
+                    route_name='photosets',
+                    renderer='json')
     config.add_view('flickfolio.views.photoset_view',
                     route_name='photoset',
                     renderer=find_renderer('photoset.mako'))
