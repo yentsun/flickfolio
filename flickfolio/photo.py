@@ -67,7 +67,6 @@ class Photoset(object):
         else:
             self._fetch_info()
 
-
     def __iter__(self):
         for item in self.items:
             yield item
