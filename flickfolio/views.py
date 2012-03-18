@@ -1,18 +1,30 @@
+import locale
 from pyramid.httpexceptions import HTTPFound
+from pyramid.i18n import get_locale_name
+from beaker.cache import cache_region
 
-from flickfolio.models import Page, Setting
+from flickfolio.models import Page, Setting, GooglePlusPost
 from flickfolio.photo import Photoset, Photo, set_cridentials
 
 set_cridentials(Setting.fetch_value('api_key'),
                 Setting.fetch_value('user_id'))
 
+@cache_region('long_term', 'posts')
+def _fetch_posts():
+    GooglePlusPost.API_KEY = Setting.fetch_value('google_api_key')
+    GooglePlusPost.USER_ID = Setting.fetch_value('google_user_id')
+    posts = GooglePlusPost.fetch_all()
+    return posts
+
 def index_view(request):
-    return {}
+    """List Google+ posts"""
+    locale.setlocale(locale.LC_TIME, get_locale_name(request))
+    return {'posts': _fetch_posts()}
 
 def photosets_view(request):
     """List photosets in JSON format"""
     return {
-        'photosets': Photoset.fetch_all(for_json=True)
+        'photosets': Photoset.fetch_all(True)
     }
 
 def photoset_view(request):

@@ -27,7 +27,7 @@ class ViewTests(unittest.TestCase):
     def test_index_view(self):
         from flickfolio.views import index_view
         request = DummyRequest()
-        response = index_view(request)
+        index_view(request)
 
     def test_photosets_view(self):
         from flickfolio.views import photosets_view

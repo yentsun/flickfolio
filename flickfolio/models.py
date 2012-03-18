@@ -1,20 +1,59 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 
+import datetime
 import transaction
 import sys
-from sqlalchemy import Column
-from sqlalchemy import String
-from sqlalchemy import Integer
-from sqlalchemy import Unicode
-from sqlalchemy import UnicodeText
+import urllib2
+import simplejson
+from sqlalchemy import (Column, String, Integer, Unicode, UnicodeText)
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import scoped_session
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session, sessionmaker
 from zope.sqlalchemy import ZopeTransactionExtension
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
+
+class GooglePlusPost():
+    """A post from Google+"""
+
+    USER_ID = None
+    API_KEY = None
+
+    def __init__(self, title, date, url):
+        self.date = self._make_datetime(date)
+        self.title = title
+        self.url = url
+
+    def date_(self, format):
+        return self.date.strftime(format).decode('utf-8')
+
+    def _make_datetime(self, string):
+        return datetime.datetime.strptime(string, '%Y-%m-%dT%H:%M:%S.%fZ')
+
+    @classmethod
+    def fetch_all(cls):
+        req = urllib2.Request('https://www.googleapis.com/plus/v1/people/%s/activities/public?key=%s' % (cls.USER_ID, cls.API_KEY))
+        opener = urllib2.build_opener()
+        file = opener.open(req)
+        response = simplejson.load(file)
+        items = []
+        for item in response['items']:
+            new_item = cls(item['title'], item['updated'], item['url'])
+            if 'actor' in item['object']:
+                new_item.author = item['object']['actor']
+            else:
+                new_item.author = item['actor']
+            new_item.comments = item['object']['replies']['totalItems']
+            new_item.attachments = []
+            for attachment in item['object']['attachments']:
+                if new_item.title == '' and 'displayName' in attachment:
+                    new_item.title = attachment['displayName']
+                if 'content' in attachment:
+                    new_item.description = attachment['content']
+                new_item.attachments.append(attachment)
+            items.append(new_item)
+        return items
 
 class Page(Base):
     """ The SQLAlchemy declarative model class for a Page object. """
@@ -24,7 +63,7 @@ class Page(Base):
     title = Column(Unicode(255))
     body = Column(UnicodeText)
 
-    def __init__(self,slug, menuId, title, body):
+    def __init__(self, slug, menuId, title, body):
         self.slug = slug
         self.menuId = menuId
         self.title = title

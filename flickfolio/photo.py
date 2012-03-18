@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flickrapi import FlickrAPI
+from beaker.cache import cache_region
 
 SIZES = {
     'square': 's',
@@ -103,6 +104,7 @@ class Photoset(object):
                     self.next = sets[0]
 
     @classmethod
+    @cache_region('long_term', 'flickr_photosets')
     def fetch_all(cls, for_json=False):
         photoset_items = flickr.photosets_getList(user_id=USER_ID)[0]
         photosets = []

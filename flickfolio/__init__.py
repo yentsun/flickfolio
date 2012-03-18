@@ -3,6 +3,7 @@ import os
 from sqlalchemy import engine_from_config
 from pyramid.config import Configurator
 from pyramid.session import UnencryptedCookieSessionFactoryConfig
+from pyramid_beaker import set_cache_regions_from_settings
 
 from flickfolio.resources import Root
 from flickfolio.models import initialize_sql, Setting
@@ -19,6 +20,7 @@ def main(global_config, **settings):
     def find_renderer(template_file, theme=theme):
         return 'flickfolio:templates/%s/%s' % (theme, template_file)
 
+    set_cache_regions_from_settings(settings)
     session_factory = UnencryptedCookieSessionFactoryConfig(Setting.fetch_value('secret'))
     config = Configurator(root_factory=Root,
                           settings=settings,
